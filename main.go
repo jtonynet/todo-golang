@@ -4,19 +4,31 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 )
+
+type Todo struct {
+	UUID  uuid.UUID `json:"id"`
+	Title string    `json:"tile"`
+}
+
+type TodosResponse struct {
+	Items []Todo `json:"items"`
+}
 
 func main() {
 	r := gin.Default()
+
 	r.GET("/todos", func(c *gin.Context) {
-		items := []gin.H{
-			{"id": 1, "title": "Title 1"},
-			{"id": 2, "title": "Title 2"},
-			{"id": 3, "title": "Title 3"},
-		} // Sua lista de itens aqui
-		c.JSON(http.StatusOK, gin.H{
-			"items": items,
-		})
+		todo01 := Todo{UUID: uuid.New(), Title: "Title 1"}
+		todo02 := Todo{UUID: uuid.New(), Title: "Title 2"}
+		todo03 := Todo{UUID: uuid.New(), Title: "Title 3"}
+
+		response := TodosResponse{
+			Items: []Todo{todo01, todo02, todo03},
+		}
+
+		c.JSON(http.StatusOK, response)
 	})
 	r.Run() // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
 }
