@@ -7,6 +7,27 @@ import (
 	"github.com/google/uuid"
 )
 
+type TodoDatabase interface {
+	RetrieveTodoList() []Todo
+}
+
+type InMemoryTodoDatabase struct {
+}
+
+func NewImMemoryTodoDatabase() InMemoryTodoDatabase {
+	return InMemoryTodoDatabase{}
+}
+
+func (imdb *InMemoryTodoDatabase) RetrieveTodoList() []Todo {
+	var todos []Todo
+
+	todos = append(todos, Todo{UUID: uuid.New(), Title: "Title 1"})
+	todos = append(todos, Todo{UUID: uuid.New(), Title: "Title 2"})
+	todos = append(todos, Todo{UUID: uuid.New(), Title: "Title 3"})
+
+	return todos
+}
+
 type Todo struct {
 	UUID  uuid.UUID `json:"id"`
 	Title string    `json:"tile"`
@@ -20,12 +41,10 @@ func main() {
 	r := gin.Default()
 
 	r.GET("/todos", func(c *gin.Context) {
-		todo01 := Todo{UUID: uuid.New(), Title: "Title 1"}
-		todo02 := Todo{UUID: uuid.New(), Title: "Title 2"}
-		todo03 := Todo{UUID: uuid.New(), Title: "Title 3"}
+		imMemoryDB := NewImMemoryTodoDatabase()
 
 		response := TodosResponse{
-			Items: []Todo{todo01, todo02, todo03},
+			Items: imMemoryDB.RetrieveTodoList(),
 		}
 
 		c.JSON(http.StatusOK, response)
