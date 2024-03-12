@@ -12,18 +12,24 @@ type TodoDatabase interface {
 }
 
 type InMemoryTodoDatabase struct {
+	todoList map[uuid.UUID]Todo
 }
 
 func NewImMemoryTodoDatabase() InMemoryTodoDatabase {
-	return InMemoryTodoDatabase{}
+	result := InMemoryTodoDatabase{}
+	result.todoList = make(map[uuid.UUID]Todo)
+	return result
 }
 
 func (imdb *InMemoryTodoDatabase) RetrieveTodoList() []Todo {
 	var todos []Todo
+	todos = make([]Todo, 0)
 
-	todos = append(todos, Todo{UUID: uuid.New(), Title: "Title 1"})
-	todos = append(todos, Todo{UUID: uuid.New(), Title: "Title 2"})
-	todos = append(todos, Todo{UUID: uuid.New(), Title: "Title 3"})
+	// todos = append(todos, Todo{UUID: uuid.New(), Title: "Title 1"})
+
+	for _, todo := range imdb.todoList {
+		todos = append(todos, todo)
+	}
 
 	return todos
 }
